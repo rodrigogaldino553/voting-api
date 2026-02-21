@@ -69,18 +69,19 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: api_production
-    username: api
-    password: <%= ENV["API_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
+    database: <%= ENV["DATABASE_NAME"] %>
+    username: <%= ENV["DATABASE_USERNAME"] %>
+    password: <%= ENV["DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: api_production_cache
+    database: <%= ENV["DATABASE_NAME"] %>_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: api_production_queue
+    database: <%= ENV["DATABASE_NAME"] %>_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: api_production_cable
+    database: <%= ENV["DATABASE_NAME"] %>_cable
     migrations_paths: db/cable_migrate
