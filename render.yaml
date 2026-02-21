@@ -1,0 +1,54 @@
+services:
+  # 1. The Rails Web App
+  - type: web
+    name: rails-api
+    runtime: docker
+    plan: free # Adjust plan as needed
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        sync_placeholder: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: api-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: api-redis
+          property: connectionString
+
+  # 2. Sidekiq Worker
+  - type: worker
+    name: sidekiq-worker
+    runtime: docker
+    plan: free
+    command: bundle exec sidekiq
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        sync_placeholder: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: api-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: api-redis
+          property: connectionString
+
+  # 3. Redis Instance
+  - type: redis
+    name: api-redis
+    plan: free # Adjust plan as needed
+    ipAllowList: [] # Only allow internal connections
+
+databases:
+  # 4. Managed PostgreSQL
+  - name: api-db
+    plan: free # Adjust plan as needed
+    databaseName: api_production
+    user: api_user
