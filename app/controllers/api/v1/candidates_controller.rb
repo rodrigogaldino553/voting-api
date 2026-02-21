@@ -7,12 +7,12 @@ module Api
       def index
         @candidates = Candidate.all
 
-        render json: @candidates
+        render json: CandidateSerializer.new(@candidates).serializable_hash
       end
 
       # GET /api/v1/candidates/1
       def show
-        render json: @candidate
+        render json: CandidateSerializer.new(@candidate).serializable_hash
       end
 
       # POST /api/v1/candidates
@@ -20,7 +20,7 @@ module Api
         @candidate = Candidate.new(candidate_params)
 
         if @candidate.save
-          render json: @candidate, status: :created, location: api_v1_candidate_url(@candidate)
+          render json: CandidateSerializer.new(@candidate).serializable_hash, status: :created, location: api_v1_candidate_url(@candidate)
         else
           render json: @candidate.errors, status: :unprocessable_content
         end
@@ -29,7 +29,7 @@ module Api
       # PATCH/PUT /api/v1/candidates/1
       def update
         if @candidate.update(candidate_params)
-          render json: @candidate
+          render json: CandidateSerializer.new(@candidate).serializable_hash
         else
           render json: @candidate.errors, status: :unprocessable_content
         end

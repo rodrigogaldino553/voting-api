@@ -7,12 +7,12 @@ module Api
       def index
         @elections = Election.all
 
-        render json: @elections
+        render json: ElectionSerializer.new(@elections).serializable_hash
       end
 
       # GET /elections/1
       def show
-        render json: @election
+        render json: ElectionSerializer.new(@election).serializable_hash
       end
 
       # POST /elections
@@ -20,7 +20,7 @@ module Api
         @election = Election.new(election_params)
 
         if @election.save
-          render json: @election, status: :created, location: api_v1_election_url(@election)
+          render json: ElectionSerializer.new(@election).serializable_hash, status: :created, location: api_v1_election_url(@election)
         else
           render json: @election.errors, status: :unprocessable_content
         end
@@ -29,7 +29,7 @@ module Api
       # PATCH/PUT /elections/1
       def update
         if @election.update(election_params)
-          render json: @election
+          render json: ElectionSerializer.new(@election).serializable_hash
         else
           render json: @election.errors, status: :unprocessable_content
         end
