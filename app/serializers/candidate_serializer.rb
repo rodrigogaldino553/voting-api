@@ -1,4 +1,3 @@
-class CandidateSerializer
-  include JSONAPI::Serializer
-  attributes :name
+class CandidateSerializer < ActiveModel::Serializer
+  attributes :id, :name
 end
