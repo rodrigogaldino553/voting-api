@@ -10,7 +10,6 @@ RSpec.describe ElectionsController, type: :routing do
       expect(get: "/elections/1").to route_to("elections#show", id: "1")
     end
 
-
     it "routes to #create" do
       expect(post: "/elections").to route_to("elections#create")
     end

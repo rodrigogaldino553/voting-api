@@ -1,7 +1,7 @@
 module Api
   module V1
     class CandidatesController < ApplicationController
-      before_action :set_candidate, only: %i[ show update destroy ]
+      before_action :set_candidate, only: %i[show update destroy]
 
       # GET /api/v1/candidates
       def index
@@ -41,15 +41,16 @@ module Api
       end
 
       private
-        # Use callbacks to share common setup or constraints between actions.
-        def set_candidate
-          @candidate = Candidate.find(params.expect(:id))
-        end
 
-        # Only allow a list of trusted parameters through.
-        def candidate_params
-          params.expect(candidate: [ :name, :election_id ])
-        end
+      # Use callbacks to share common setup or constraints between actions.
+      def set_candidate
+        @candidate = Candidate.find(params.expect(:id))
+      end
+
+      # Only allow a list of trusted parameters through.
+      def candidate_params
+        params.expect(candidate: [:name, :election_id])
+      end
     end
   end
 end

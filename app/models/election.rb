@@ -14,6 +14,6 @@ class Election < ApplicationRecord
   end
 
   def name_sanitize
-    self.name = self.name.strip.downcase.titleize
+    self.name = name.strip.downcase.titleize
   end
 end

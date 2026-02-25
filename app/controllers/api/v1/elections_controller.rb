@@ -1,7 +1,7 @@
 module Api
   module V1
     class ElectionsController < ApplicationController
-      before_action :set_election, only: %i[ show update destroy ]
+      before_action :set_election, only: %i[show update destroy]
 
       # GET /elections
       def index
@@ -41,15 +41,16 @@ module Api
       end
 
       private
-        # Use callbacks to share common setup or constraints between actions.
-        def set_election
-          @election = Election.find(params.expect(:id))
-        end
 
-        # Only allow a list of trusted parameters through.
-        def election_params
-          params.expect(election: [ :name, :expiration_at ])
-        end
+      # Use callbacks to share common setup or constraints between actions.
+      def set_election
+        @election = Election.find(params.expect(:id))
+      end
+
+      # Only allow a list of trusted parameters through.
+      def election_params
+        params.expect(election: [:name, :expiration_at])
+      end
     end
   end
 end
