@@ -2,8 +2,8 @@ services:
     db:
         image: postgres:16-alpine
         environment:
-          - POSTGRES_USER=postgres
-          - POSTGRES_PASSWORD=password
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=password
         ports:
             - '5433:5432'
         volumes:
@@ -11,9 +11,9 @@ services:
     redis:
         image: redis:7.0.15-alpine
         ports:
-        - '6379:6379'
+            - '6379:6379'
         volumes:
-        - redis_data:/data  
+            - redis_data:/data
     web:
         tty: true
         stdin_open: true
@@ -26,12 +26,11 @@ services:
         depends_on:
             - db
             - redis
-        secrets:
-            - rails_master_key
         environment:
-            - RAILS_MASTER_KEY_PATH=/run/secrets/rails_master_key
             - DATABASE_URL=postgresql://postgres:password@db:5432
             - REDIS_URL=redis://redis:6379/0
+        env_file:
+            - .env
     sidekiq:
         build: .
         command: bundle exec sidekiq
@@ -40,12 +39,11 @@ services:
         depends_on:
             - db
             - redis
-        secrets:
-            - rails_master_key
         environment:
-            - RAILS_MASTER_KEY_PATH=/run/secrets/rails_master_key
             - DATABASE_URL=postgresql://postgres:password@db:5432
             - REDIS_URL=redis://redis:6379/0
+        env_file:
+            - .env
     rspec:
         build: .
         command: bundle exec rspec
@@ -53,15 +51,13 @@ services:
             - .:/rails
         depends_on:
             - db
-            - redis 
+            - redis
         environment:
             - DATABASE_URL=postgresql://postgres:password@db:5432
             - REDIS_URL=redis://redis:6379/0
-            - RAILS_ENV=test
-secrets:
-  rails_master_key:
-    file: ./config/master.key
-    
+        env_file:
+            - .env
+
 volumes:
     postgres13:
     redis_data:

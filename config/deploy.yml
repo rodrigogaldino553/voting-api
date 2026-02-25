@@ -21,6 +21,7 @@ env:
     - RAILS_MASTER_KEY
     - DATABASE_PASSWORD
     - REDIS_URL
+    - DEVISE_JWT_SECRET_KEY
   clear:
     # Set to true if you want to run Solid Queue in Puma as well, 
     # but since we set up Sidekiq we might not need this.
