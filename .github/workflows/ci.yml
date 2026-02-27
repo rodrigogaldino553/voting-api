@@ -48,7 +48,7 @@ jobs:
             rubocop-${{ runner.os }}-${{ env.DEPENDENCIES_HASH }}-
 
       - name: Lint code for consistent style
-        run: standardrb --format github
+        run: bundle exec standardrb --format github
 
   test:
     runs-on: ubuntu-latest
