@@ -1,6 +1,6 @@
 class HomeController < ApplicationController
-  skip_before_action :verify_authenticity_token, only: [:index]
+  skip_before_action :authenticate_user!
   def index
-    render plain: "Hello, World!"
+    render json: { message: "Hello, World!" }
   end
 end
