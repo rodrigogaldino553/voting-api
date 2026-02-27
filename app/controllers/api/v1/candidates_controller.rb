@@ -7,12 +7,12 @@ module Api
       def index
         @candidates = Candidate.all
 
-        render json: CandidateSerializer.new(@candidates).serializable_hash
+        render json: @candidates
       end
 
       # GET /api/v1/candidates/1
       def show
-        render json: CandidateSerializer.new(@candidate).serializable_hash
+        render json: @candidate
       end
 
       # POST /api/v1/candidates
@@ -20,7 +20,7 @@ module Api
         @candidate = Candidate.new(candidate_params)
 
         if @candidate.save
-          render json: CandidateSerializer.new(@candidate).serializable_hash, status: :created, location: api_v1_candidate_url(@candidate)
+          render json: @candidate, status: :created, location: api_v1_candidate_url(@candidate)
         else
           render json: @candidate.errors, status: :unprocessable_content
         end
@@ -29,7 +29,7 @@ module Api
       # PATCH/PUT /api/v1/candidates/1
       def update
         if @candidate.update(candidate_params)
-          render json: CandidateSerializer.new(@candidate).serializable_hash
+          render json: @candidate
         else
           render json: @candidate.errors, status: :unprocessable_content
         end
@@ -38,6 +38,7 @@ module Api
       # DELETE /api/v1/candidates/1
       def destroy
         @candidate.destroy!
+        head :no_content
       end
 
       private
@@ -49,7 +50,7 @@ module Api
 
       # Only allow a list of trusted parameters through.
       def candidate_params
-        params.expect(candidate: [:name, :election_id])
+        params.expect(candidate: [ :name, :election_id ])
       end
     end
   end
