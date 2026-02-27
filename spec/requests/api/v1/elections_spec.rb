@@ -15,16 +15,16 @@ require "rails_helper"
 RSpec.describe "/api/v1/elections", type: :request do
   let(:user) { User.create!(email: "admin@example.com", password: "password123") }
   let(:valid_headers) {
-    post "/login", params: { user: { email: user.email, password: user.password } }, as: :json
-    { "Authorization" => response.headers["Authorization"] }
+    post "/login", params: {user: {email: user.email, password: user.password}}, as: :json
+    {"Authorization" => response.headers["Authorization"]}
   }
 
   let(:valid_attributes) {
-    { name: "General Election 2026" }
+    {name: "General Election 2026"}
   }
 
   let(:invalid_attributes) {
-    { name: "" }
+    {name: ""}
   }
 
   describe "GET /index" do
@@ -48,13 +48,13 @@ RSpec.describe "/api/v1/elections", type: :request do
       it "creates a new Election" do
         expect {
           post api_v1_elections_url,
-               params: { election: valid_attributes }, headers: valid_headers, as: :json
+            params: {election: valid_attributes}, headers: valid_headers, as: :json
         }.to change(Election, :count).by(1)
       end
 
       it "renders a JSON response with the new election" do
         post api_v1_elections_url,
-             params: { election: valid_attributes }, headers: valid_headers, as: :json
+          params: {election: valid_attributes}, headers: valid_headers, as: :json
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
@@ -64,13 +64,13 @@ RSpec.describe "/api/v1/elections", type: :request do
       it "does not create a new Election" do
         expect {
           post api_v1_elections_url,
-               params: { election: invalid_attributes }, headers: valid_headers, as: :json
+            params: {election: invalid_attributes}, headers: valid_headers, as: :json
         }.to change(Election, :count).by(0)
       end
 
       it "renders a JSON response with errors for the new election" do
         post api_v1_elections_url,
-             params: { election: invalid_attributes }, headers: valid_headers, as: :json
+          params: {election: invalid_attributes}, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
@@ -80,13 +80,13 @@ RSpec.describe "/api/v1/elections", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        { name: "Updated Election Name" }
+        {name: "Updated Election Name"}
       }
 
       it "updates the requested election" do
         election = Election.create! valid_attributes
         patch api_v1_election_url(election),
-              params: { election: new_attributes }, headers: valid_headers, as: :json
+          params: {election: new_attributes}, headers: valid_headers, as: :json
         election.reload
         expect(election.name).to eq("Updated Election Name")
       end
@@ -94,7 +94,7 @@ RSpec.describe "/api/v1/elections", type: :request do
       it "renders a JSON response with the election" do
         election = Election.create! valid_attributes
         patch api_v1_election_url(election),
-              params: { election: new_attributes }, headers: valid_headers, as: :json
+          params: {election: new_attributes}, headers: valid_headers, as: :json
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
@@ -104,7 +104,7 @@ RSpec.describe "/api/v1/elections", type: :request do
       it "renders a JSON response with errors for the election" do
         election = Election.create! valid_attributes
         patch api_v1_election_url(election),
-              params: { election: invalid_attributes }, headers: valid_headers, as: :json
+          params: {election: invalid_attributes}, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.content_type).to match(a_string_including("application/json"))
       end

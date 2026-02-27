@@ -50,7 +50,7 @@ module Api
 
       # Only allow a list of trusted parameters through.
       def candidate_params
-        params.expect(candidate: [ :name, :election_id ])
+        params.expect(candidate: [:name, :election_id])
       end
     end
   end

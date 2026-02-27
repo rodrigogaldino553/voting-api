@@ -76,11 +76,11 @@ RSpec.describe "Authentication", type: :request do
       }, as: :json
       token = response.headers["Authorization"]
 
-      delete logout_url, headers: { Authorization: token }, as: :json
+      delete logout_url, headers: {Authorization: token}, as: :json
       expect(response).to have_http_status(:ok)
       expect(JSON.parse(response.body)["message"]).to eq("Logged out successfully.")
 
-      get "/api/v1/elections", headers: { Authorization: token }, as: :json
+      get "/api/v1/elections", headers: {Authorization: token}, as: :json
       expect(response).to have_http_status(:unauthorized)
     end
   end
