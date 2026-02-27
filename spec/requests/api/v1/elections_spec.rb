@@ -47,7 +47,7 @@ RSpec.describe "/api/v1/elections", type: :request do
       get api_v1_election_url(election), headers: valid_headers, as: :json
       expect(response).to be_successful
     end
-    
+
     it "renders a successful response for unauthenticated users" do
       election = Election.create! valid_attributes
       get api_v1_election_url(election), as: :json
@@ -70,7 +70,7 @@ RSpec.describe "/api/v1/elections", type: :request do
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
-      
+
       it "unallowed for unauthenticated users" do
         post api_v1_elections_url,
           params: {election: valid_attributes}, as: :json
