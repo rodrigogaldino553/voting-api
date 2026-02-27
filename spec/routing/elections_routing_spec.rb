@@ -1,29 +1,29 @@
 require "rails_helper"
 
-RSpec.describe ElectionsController, type: :routing do
+RSpec.describe Api::V1::ElectionsController, type: :routing do
   describe "routing" do
     it "routes to #index" do
-      expect(get: "/elections").to route_to("elections#index")
+      expect(get: "/api/v1/elections").to route_to("api/v1/elections#index")
     end
 
     it "routes to #show" do
-      expect(get: "/elections/1").to route_to("elections#show", id: "1")
+      expect(get: "/api/v1/elections/1").to route_to("api/v1/elections#show", id: "1")
     end
 
     it "routes to #create" do
-      expect(post: "/elections").to route_to("elections#create")
+      expect(post: "/api/v1/elections").to route_to("api/v1/elections#create")
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/elections/1").to route_to("elections#update", id: "1")
+      expect(put: "/api/v1/elections/1").to route_to("api/v1/elections#update", id: "1")
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/elections/1").to route_to("elections#update", id: "1")
+      expect(patch: "/api/v1/elections/1").to route_to("api/v1/elections#update", id: "1")
     end
 
     it "routes to #destroy" do
-      expect(delete: "/elections/1").to route_to("elections#destroy", id: "1")
+      expect(delete: "/api/v1/elections/1").to route_to("api/v1/elections#destroy", id: "1")
     end
   end
 end
