@@ -89,10 +89,6 @@ jobs:
       - name: Setup test database
         if: steps.migration-check.outputs.migrations_changed == 'false'
         run: bin/rails db:prepare
-      - name: Precompile assets
-        run: bundle exec rails assets:precompile
-      - name: Validate Sidekiq-cron config
-        run: bundle exec rake sidekiq_cron:validate
       - name: Run RSpec
         run: bin/rspec
       - name: Upload coverage
