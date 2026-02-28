@@ -409,6 +409,8 @@ GEM
       lint_roller (~> 1.1)
       rubocop-performance (~> 1.26.0)
     stringio (3.2.0)
+    strong_migrations (2.5.2)
+      activerecord (>= 7.1)
     thor (1.5.0)
     thruster (0.1.18)
     thruster (0.1.18-aarch64-linux)
@@ -476,6 +478,7 @@ DEPENDENCIES
   solid_cache
   solid_queue
   standard (>= 1.35.1)
+  strong_migrations
   thruster
   tzinfo-data
 

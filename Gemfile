@@ -62,5 +62,7 @@ group :development, :test do
 
   gem "standard", ">= 1.35.1"
 
+  gem "strong_migrations"
+
   gem "rspec-rails"
 end
