@@ -52,7 +52,11 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+      DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
     services:
       postgres:
         image: postgres
@@ -62,13 +66,6 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
-
-      # redis:
-      #   image: valkey/valkey:8
-      #   ports:
-      #     - 6379:6379
-      #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -76,12 +73,6 @@ jobs:
           fetch-depth: 0
       - name: Setup ruby environment
         uses: ruby/setup-ruby@v1
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-          DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
-          REDIS_URL: redis://localhost:6379/0
         with:
           bundler-cache: true
       - name: Check for migration changes
@@ -94,19 +85,15 @@ jobs:
           fi
       - name: Verify migrations run cleanly
         if: steps.migration-check.outputs.migrations_changed == 'true'
-        run: RAILS_ENV=test bin/rails db:drop db:create db:migrate
+        run: bin/rails db:drop db:create db:migrate
       - name: Setup test database
         if: steps.migration-check.outputs.migrations_changed == 'false'
-        env:
-          DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
-        run: RAILS_ENV=test bin/rails db:prepare
+        run: bin/rails db:prepare
       - name: Precompile assets
         run: bundle exec rails assets:precompile
       - name: Validate Sidekiq-cron config
         run: bundle exec rake sidekiq_cron:validate
       - name: Run RSpec
-        env:
-          DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
         run: bin/rspec
       - name: Upload coverage
         uses: actions/upload-artifact@v4
