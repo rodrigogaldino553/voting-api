@@ -70,25 +70,46 @@ jobs:
       #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libpq-dev
-
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          bundler-cache: true
-
-      - name: Run tests
+          fetch-depth: 0
+      - name: Setup ruby environment
+        uses: ruby/setup-ruby@v1
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
           DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
           REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare rspec
+        with:
+          bundler-cache: true
+      - name: Check for migration changes
+        id: migration-check
+        run: |
+          if git diff --name-only origin/master | grep -q "db/migrate"; then
+            echo "migrations_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "migrations_changed=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Verify migrations run cleanly
+        if: steps.migration-check.outputs.migrations_changed == 'true'
+        run: RAILS_ENV=test bin/rails db:drop db:create db:migrate
+      - name: Setup test database
+        if: steps.migration-check.outputs.migrations_changed == 'false'
+        run: RAILS_ENV=test bin/rails db:prepare
+      - name: Precompile assets
+        run: bundle exec rails assets:precompile
+      - name: Validate Sidekiq-cron config
+        run: bundle exec rake sidekiq_cron:validate
+      - name: Run RSpec
+        run: bin/rspec
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 1
 
   sonar:
     runs-on: ubuntu-latest
