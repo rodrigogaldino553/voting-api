@@ -1,20 +1,19 @@
 require "rails_helper"
 
 RSpec.describe Election, type: :model do
+  let(:election) { Election.new(name: "Test Election", expiration_at: Time.current + 1.week) }
   describe "validations" do
     it "is valid with valid attributes" do
-      election = Election.new(name: "Test Election")
       expect(election).to be_valid
     end
 
     it "is invalid without a name" do
-      election = Election.new(name: nil)
+      election.name = nil
       expect(election).not_to be_valid
     end
 
     it "is invalid with a duplicate name" do
       Election.create!(name: "Test Election")
-      election = Election.new(name: "Test Election")
       expect(election).not_to be_valid
     end
   end
@@ -26,7 +25,7 @@ RSpec.describe Election, type: :model do
     end
 
     it "destroys dependent candidates" do
-      election = Election.create!(name: "Test Election")
+      election = Election.create!(name: "Destroyed Election")
       election.candidates.create!(name: "Candidate 1")
       expect { election.destroy }.to change(Candidate, :count).by(-1)
     end
