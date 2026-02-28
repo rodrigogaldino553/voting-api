@@ -97,12 +97,16 @@ jobs:
         run: RAILS_ENV=test bin/rails db:drop db:create db:migrate
       - name: Setup test database
         if: steps.migration-check.outputs.migrations_changed == 'false'
+        env:
+          DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
         run: RAILS_ENV=test bin/rails db:prepare
       - name: Precompile assets
         run: bundle exec rails assets:precompile
       - name: Validate Sidekiq-cron config
         run: bundle exec rake sidekiq_cron:validate
       - name: Run RSpec
+        env:
+          DEVISE_JWT_SECRET_KEY: ${{ secrets.DEVISE_JWT_SECRET_KEY }}
         run: bin/rspec
       - name: Upload coverage
         uses: actions/upload-artifact@v4
