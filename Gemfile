@@ -40,6 +40,7 @@ gem "rack-cors"
 gem "active_model_serializers", "~> 0.10.0"
 gem "devise"
 gem "devise-jwt"
+gem "strong_migrations"
 
 group :development, :test do
   gem "bullet"
@@ -61,8 +62,6 @@ group :development, :test do
   gem "simplecov", require: false
 
   gem "standard", ">= 1.35.1"
-
-  gem "strong_migrations"
 
   gem "rspec-rails"
 end
