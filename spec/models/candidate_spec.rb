@@ -1,10 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Candidate, type: :model do
-  let(:election) { Election.create!(name: "Test Election") }
-  let(:candidate) { Candidate.new(name: "Candidate Name", election: election) }
+  let(:election) { create(:election) }
 
   describe "validations" do
+    let(:candidate) { Candidate.new(name: "Candidate Name", election: election) }
     it "is valid with valid attributes" do
       expect(candidate).to be_valid
     end
