@@ -1,7 +1,8 @@
 class Candidate < ApplicationRecord
   belongs_to :election
+  has_many :votes, dependent: :destroy
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: {scope: :election}
   validates :election_id, presence: true
 
   before_save :name_sanitize
