@@ -40,9 +40,10 @@ module Api
         @candidate.destroy!
         head :no_content
       end
-      
+
+      # POST /api/v1/candidates/1/vote
       def vote
-        vote = Vote.new(user: current_user, candidate: @candidate)
+        vote = Vote.new(user: current_user, candidate: @candidate, election: @candidate.election)
 
         if vote.save
           render json: vote, status: :created, location: api_v1_candidate_url(@candidate)
