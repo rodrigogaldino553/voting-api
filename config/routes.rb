@@ -12,11 +12,9 @@ Rails.application.routes.draw do
     }
   namespace :api do
     namespace :v1 do
-      resources :elections
-      resources :candidates do
-        member do
-          post :vote
-        end
+      resources :elections do
+        resources :candidates, only: [:index, :show, :create, :update, :destroy], shallow: true
+        post :vote, to: "elections#vote", on: :collection
       end
     end
   end

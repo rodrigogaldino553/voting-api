@@ -41,6 +41,17 @@ module Api
         @election.destroy!
       end
 
+      # POST /api/v1/candidates/1/vote
+      def vote
+        vote = Vote.new(user_id: current_user.id, candidate_id: params[:candidate_id], election_id: params[:election_id])
+
+        if vote.save
+          render json: vote, status: :created, location: api_v1_candidate_url(params[:candidate_id])
+        else
+          render json: vote.errors, status: :unprocessable_content
+        end
+      end
+
       private
 
       # Use callbacks to share common setup or constraints between actions.

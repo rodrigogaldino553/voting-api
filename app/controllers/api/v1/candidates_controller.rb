@@ -1,7 +1,7 @@
 module Api
   module V1
     class CandidatesController < ApplicationController
-      before_action :set_candidate, only: %i[show update destroy vote]
+      before_action :set_candidate, only: %i[show update destroy]
 
       # GET /api/v1/candidates
       def index
@@ -39,17 +39,6 @@ module Api
       def destroy
         @candidate.destroy!
         head :no_content
-      end
-
-      # POST /api/v1/candidates/1/vote
-      def vote
-        vote = Vote.new(user: current_user, candidate: @candidate, election: @candidate.election)
-
-        if vote.save
-          render json: vote, status: :created, location: api_v1_candidate_url(@candidate)
-        else
-          render json: vote.errors, status: :unprocessable_content
-        end
       end
 
       private
