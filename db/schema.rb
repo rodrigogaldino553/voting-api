@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_01_000752) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_03_220040) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,6 +27,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000752) do
     t.datetime "expiration_at"
     t.string "name"
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_elections_on_user_id"
   end
 
   create_table "jwt_denylists", force: :cascade do |t|
@@ -62,6 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_01_000752) do
   end
 
   add_foreign_key "candidates", "elections"
+  add_foreign_key "elections", "users"
   add_foreign_key "votes", "candidates"
   add_foreign_key "votes", "elections"
   add_foreign_key "votes", "users"
