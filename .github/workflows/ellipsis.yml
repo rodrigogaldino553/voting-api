@@ -1,0 +1,13 @@
+# .github/workflows/ellipsis.yml
+name: Ellipsis Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  ellipsis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Ellipsis Review
+        run: echo "Ellipsis runs automatically via webhook"
