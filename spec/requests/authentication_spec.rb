@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Authentication", type: :request do
   let(:user) { User.create!(email: "test@example.com", password: "password123") }
+  let(:election) { create(:election, user: user)}
   let(:signup_url) { "/signup" }
   let(:login_url) { "/login" }
   let(:logout_url) { "/logout" }
@@ -80,7 +81,7 @@ RSpec.describe "Authentication", type: :request do
       expect(response).to have_http_status(:ok)
       expect(JSON.parse(response.body)["message"]).to eq("Logged out successfully.")
 
-      get "/api/v1/candidates", headers: {Authorization: token}, as: :json
+      get "/api/v1/elections/#{election.id}/candidates", headers: {Authorization: token}, as: :json
       expect(response).to have_http_status(:unauthorized)
     end
   end
