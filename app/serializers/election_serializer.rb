@@ -1,5 +1,5 @@
 class ElectionSerializer < ActiveModel::Serializer
-  attributes :id, :name, :expiration_at
+  attributes :id, :user_id, :name, :expiration_at
 
   has_many :candidates
 end
