@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Authentication", type: :request do
   let(:user) { User.create!(email: "test@example.com", password: "password123") }
-  let(:election) { create(:election, user: user)}
+  let(:election) { create(:election, user: user) }
   let(:signup_url) { "/signup" }
   let(:login_url) { "/login" }
   let(:logout_url) { "/logout" }
