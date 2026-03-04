@@ -19,6 +19,7 @@ module Api
       # POST /elections
       def create
         @election = Election.new(election_params)
+        @election.user = current_user
 
         if @election.save
           render json: @election, status: :created, location: api_v1_election_url(@election)
@@ -29,6 +30,7 @@ module Api
 
       # PATCH/PUT /elections/1
       def update
+        return render json: {message: "You cant edit this election"}, status: :unauthorized if @election&.user != current_user
         if @election.update(election_params)
           render json: @election
         else
@@ -38,6 +40,7 @@ module Api
 
       # DELETE /elections/1
       def destroy
+        return render json: {message: "You cant edit this election"}, status: :unauthorized if @election&.user != current_user
         @election.destroy!
       end
 
