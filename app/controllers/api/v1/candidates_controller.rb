@@ -1,11 +1,12 @@
 module Api
   module V1
     class CandidatesController < ApplicationController
+      before_action :set_election, only: %i[index create]
       before_action :set_candidate, only: %i[show update destroy]
 
       # GET /api/v1/candidates
       def index
-        @candidates = Candidate.all
+        @candidates = @election.present? ? @election.candidates : []
 
         render json: @candidates
       end
@@ -17,9 +18,9 @@ module Api
 
       # POST /api/v1/candidates
       def create
-        @candidate = Candidate.new(candidate_params)
+        @candidate = @election.candidates.new(candidate_params)
 
-        return render json: {message: "You cant edit this election"}, status: :unauthorized if @candidate&.election&.user != current_user
+        return render json: {message: "You cant edit this election"}, status: :unauthorized if @election.user != current_user
         if @candidate.save
           render json: @candidate, status: :created, location: api_v1_candidate_url(@candidate)
         else
@@ -51,9 +52,13 @@ module Api
         @candidate = Candidate.find(params.expect(:id))
       end
 
+      def set_election
+        @election = Election.find(params[:election_id]) if params[:election_id]
+      end
+
       # Only allow a list of trusted parameters through.
       def candidate_params
-        params.expect(candidate: [:name, :election_id])
+        params.expect(candidate: [:name])
       end
     end
   end

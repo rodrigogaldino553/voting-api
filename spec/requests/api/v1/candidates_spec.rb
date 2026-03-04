@@ -11,16 +11,16 @@ RSpec.describe "Api::V1::Candidates", type: :request do
   }
 
   let(:valid_attributes) {
-    {name: "Candidate Name", election_id: election.id}
+    {name: "Candidate Name"}
   }
 
   let(:invalid_attributes) {
-    {name: "", election_id: election.id}
+    {name: ""}
   }
 
   describe "GET /index" do
     it "renders a successful response" do
-      Candidate.create! valid_attributes
+      Candidate.create! name: "Candidate Name", election_id: election.id
       get api_v1_election_candidates_url(election.id), headers: valid_headers, as: :json
       expect(response).to be_successful
     end
@@ -28,7 +28,7 @@ RSpec.describe "Api::V1::Candidates", type: :request do
 
   describe "GET /show" do
     it "renders a successful response" do
-      candidate = Candidate.create! valid_attributes
+      candidate = Candidate.create! name: "Candidate Name", election_id: election.id
       get api_v1_candidate_url(candidate), headers: valid_headers, as: :json
       expect(response).to be_successful
     end
@@ -59,8 +59,10 @@ RSpec.describe "Api::V1::Candidates", type: :request do
       end
 
       it "when current_user is not the election owner" do
-        post api_v1_election_candidates_url(election.id),
-          params: {candidate: {election_id: 0}, headers: valid_headers, as: :json}
+        other_user = create(:user)
+        other_election = create(:election, user: other_user)
+        post api_v1_election_candidates_url(other_election.id),
+          params: {candidate: valid_attributes}, headers: valid_headers, as: :json
         expect(response).to have_http_status(:unauthorized)
       end
 
@@ -76,7 +78,7 @@ RSpec.describe "Api::V1::Candidates", type: :request do
     let(:new_attributes) { {name: "Updated Candidate Name"} }
 
     it "updates the requested candidate" do
-      candidate = Candidate.create! valid_attributes
+      candidate = Candidate.create! name: "Candidate Name", election_id: election.id
       patch api_v1_candidate_url(candidate),
         params: {candidate: new_attributes}, headers: valid_headers, as: :json
       candidate.reload
@@ -86,7 +88,7 @@ RSpec.describe "Api::V1::Candidates", type: :request do
 
   describe "DELETE /destroy" do
     it "destroys the requested candidate" do
-      candidate = Candidate.create! valid_attributes
+      candidate = Candidate.create! name: "Candidate Name", election_id: election.id
       expect {
         delete api_v1_candidate_url(candidate), headers: valid_headers, as: :json
       }.to change(Candidate, :count).by(-1)
