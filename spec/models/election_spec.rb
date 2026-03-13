@@ -2,7 +2,8 @@ require "rails_helper"
 
 RSpec.describe Election, type: :model do
   describe "validations" do
-    let(:election) { Election.new(name: "New Election", expiration_at: Time.current + 1.week) }
+    let(:user) { create(:user, email: "example1@mail.com") }
+    let(:election) { Election.new(name: "New Election", expiration_at: Time.current + 1.week, user: user) }
     it "is valid with valid attributes" do
       expect(election).to be_valid
     end
@@ -14,6 +15,11 @@ RSpec.describe Election, type: :model do
 
     it "is invalid with a duplicate name" do
       create(:election, name: "New Election")
+      expect(election).not_to be_valid
+    end
+
+    it "is invalid without an user" do
+      election.user_id = nil
       expect(election).not_to be_valid
     end
   end

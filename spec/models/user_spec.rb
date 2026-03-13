@@ -28,13 +28,39 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "associations" do
+    it "has many elections" do
+      association = described_class.reflect_on_association(:elections)
+      expect(association.macro).to eq(:has_many)
+    end
+
+    it "has many votes" do
+      association = described_class.reflect_on_association(:votes)
+      expect(association.macro).to eq(:has_many)
+    end
+
+    it "destroys associated elections when user is destroyed" do
+      user = create(:user)
+      create(:election, user: user)
+      expect { user.destroy }.to change(Election, :count).by(-1)
+    end
+
+    it "destroys associated votes when user is destroyed" do
+      user = create(:user)
+      election = create(:election)
+      candidate = create(:candidate, election: election)
+      create(:vote, user: user, candidate: candidate, election: election)
+      expect { user.destroy }.to change(Vote, :count).by(-1)
+    end
+  end
+
   describe "JWT revocation strategy" do
     it "includes JTIMatcher" do
       expect(User.included_modules).to include(Devise::JWT::RevocationStrategies::JTIMatcher)
     end
 
     it "has a JTI" do
-      user = User.create!(email: "jwt@example.com", password: "password123")
+      user = create(:user)
       expect(user.jti).not_to be_nil
     end
   end

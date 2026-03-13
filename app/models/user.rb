@@ -3,6 +3,7 @@ require "devise/jwt"
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
+  has_many :elections, dependent: :destroy
   has_many :votes, dependent: :destroy
 
   # Include default devise modules. Others available are:

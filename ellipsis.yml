@@ -1,0 +1,41 @@
+# ellipsis.yaml
+version: 1.0
+
+languages:
+  ruby:
+    version: "3.2"
+    framework: rails
+    
+review:
+  rails:
+    # Security checks
+    check_mass_assignment: true
+    check_sql_injection: true
+    check_xss: true
+    check_csrf: true
+    
+    # Performance
+    check_n_plus_one: true
+    check_eager_loading: true
+    check_index_missing: true
+    
+    # Best practices
+    check_fat_controllers: true
+    check_service_objects: true
+    verify_validations: true
+  
+  rspec:
+    min_coverage: 80
+    require_request_specs: true
+    require_model_specs: true
+    check_factory_bot: true
+
+custom_rules:
+  - name: "No hardcoded secrets"
+    pattern: "(password|secret|api_key)\\s*=\\s*['\"]\\w+"
+    severity: critical
+    
+  - name: "Use strong params"
+    pattern: "params\\[:(?!id|page)\\w+\\]"
+    files: "app/controllers/**/*.rb"
+    severity: warning
