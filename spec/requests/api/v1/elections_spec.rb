@@ -103,6 +103,14 @@ RSpec.describe "/api/v1/elections", type: :request do
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to match(a_string_including("application/json"))
       end
+
+      it "returns unauthorized if current_user is not the owner" do
+        other_user = create(:user)
+        election = create(:election, user: other_user)
+        patch api_v1_election_url(election),
+          params: {election: new_attributes}, headers: valid_headers, as: :json
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
 
     context "with invalid parameters" do
@@ -122,6 +130,38 @@ RSpec.describe "/api/v1/elections", type: :request do
       expect {
         delete api_v1_election_url(election), headers: valid_headers, as: :json
       }.to change(Election, :count).by(-1)
+    end
+
+    it "returns unauthorized if current_user is not the owner" do
+      other_user = create(:user)
+      election = create(:election, user: other_user)
+      delete api_v1_election_url(election), headers: valid_headers, as: :json
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe "POST /vote" do
+    let(:election) { create(:election) }
+    let(:candidate) { create(:candidate, election: election) }
+
+    it "creates a new Vote" do
+      expect {
+        post vote_api_v1_elections_url,
+          params: {election_id: election.id, candidate_id: candidate.id}, headers: valid_headers, as: :json
+      }.to change(Vote, :count).by(1)
+    end
+
+    it "renders a JSON response with the new vote" do
+      post vote_api_v1_elections_url,
+        params: {election_id: election.id, candidate_id: candidate.id}, headers: valid_headers, as: :json
+      expect(response).to have_http_status(:created)
+    end
+
+    it "fails if user already voted in the same election" do
+      create(:vote, user: user, election: election, candidate: candidate)
+      post vote_api_v1_elections_url,
+        params: {election_id: election.id, candidate_id: candidate.id}, headers: valid_headers, as: :json
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 end
