@@ -33,11 +33,10 @@ RSpec.describe "Api::V1::Candidates", type: :request do
       # The routes.rb has resources :elections { resources :candidates, shallow: true }
       # This means index is nested.
       # Let's try to access it via /api/v1/candidates (it might not exist)
-      begin
-        get "/api/v1/candidates", headers: valid_headers, as: :json
-      rescue ActionController::RoutingError
-        # If it doesn't exist, it's fine.
-      end
+
+      get "/api/v1/candidates", headers: valid_headers, as: :json
+    rescue ActionController::RoutingError
+      # If it doesn't exist, it's fine.
     end
   end
 
